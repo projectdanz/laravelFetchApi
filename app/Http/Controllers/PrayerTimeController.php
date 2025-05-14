@@ -14,18 +14,38 @@ class PrayerTimeController extends Controller
         $this->prayerTimeService = $prayerTimeService;
     }
 
-    public function index($location, $date)
-{
-    // Dapatkan ID kota berdasarkan lokasi
-    $cityId = $this->prayerTimeService->getCityId($location);
-    if (!$cityId) {
-        return response()->json(['error' => 'City not found'], 404);
+// yang dibawah ini sudah otomatis pengisian tanggal hari ini secara otomatis
+
+public function index($location)
+    {
+        // Dapatkan ID kota berdasarkan nama lokasi
+        $cityId = $this->prayerTimeService->getCityId($location);
+
+        if (!$cityId) {
+            return response()->json(['error' => 'City not found'], 404);
+        }
+
+        // Ambil jadwal sholat berdasarkan ID kota dan tanggal sekarang
+        $prayerTimes = $this->prayerTimeService->getPrayerTimes($cityId, now()->toDateString());
+
+        return response()->json($prayerTimes);
     }
 
-    // Dapatkan jadwal sholat berdasarkan ID kota dan tanggal
-    $prayerTimes = $this->prayerTimeService->getPrayerTimes($cityId, $date);
 
-    return response()->json($prayerTimes);
-}
+// yang dibawah ini cara pengambilan tanggal secara manual
+
+    //     public function index($location, $date)
+    // {
+    //     // Dapatkan ID kota berdasarkan lokasi
+    //     $cityId = $this->prayerTimeService->getCityId($location);
+    //     if (!$cityId) {
+    //         return response()->json(['error' => 'City not found'], 404);
+    //     }
+
+    //     // Dapatkan jadwal sholat berdasarkan ID kota dan tanggal
+    //     $prayerTimes = $this->prayerTimeService->getPrayerTimes($cityId, $date);
+
+    //     return response()->json($prayerTimes);
+    // }
 
 }
